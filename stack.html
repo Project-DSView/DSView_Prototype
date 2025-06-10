@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stack Visualizer</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css" />
+
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #editor {
+            width: 600px;
+            height: 300px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+
+        #output,
+        #steps {
+            width: 600px;
+            min-height: 80px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #fefefe;
+            white-space: pre-wrap;
+            margin-top: 10px;
+        }
+
+        #visualization {
+            margin-top: 20px;
+            width: 600px;
+            min-height: 120px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: flex-start;
+            overflow-y: auto;
+            padding: 10px;
+            position: relative;
+        }
+
+        .node {
+            padding: 12px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 8px;
+            margin: 8px 0;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        #stepControls {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        a#backBtn {
+            margin-top: 20px;
+            display: inline-block;
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Stack Visualizer</h1>
+
+    <div id="editor"></div>
+    <div style="display: flex; margin: 5px;">
+        <button id="runBtn">Run</button>
+        <button id="downloadBtn" style="margin-left: 5px;">Download Visualization as Image</button>
+    </div>
+
+    <div id="output">Output will appear here</div>
+    <div id="visualization">Visualization will appear here</div>
+
+    <div id="stepControls">
+        <button id="prevStep">Previous Step</button>
+        <button id="nextStep">Next Step</button>
+    </div>
+
+    <div id="steps">Steps will appear here</div>
+
+    <a href="index.html" id="backBtn">&larr; Back to Index</a>
+
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        const editor = CodeMirror(document.getElementById("editor"), {
+            mode: "python",
+            lineNumbers: true,
+            value: `log = []
+
+class Stack:
+    def __init__(self):
+        self.items = []
+
+    def push(self, item):
+        log.append((self.items.copy(), f"Push {item}"))
+        self.items.append(item)
+
+    def pop(self):
+        if self.items:
+            log.append((self.items.copy(), f"Pop {self.items[-1]}"))
+            self.items.pop()
+
+    def to_list(self):
+        return self.items
+
+stack = Stack()
+stack.push(1)
+stack.push(2)
+stack.push(3)
+stack.pop()
+stack.push(4)
+
+data_type = "stack"
+data = stack.to_list()
+`
+        });
+
+        let pyodideReadyPromise = loadPyodide();
+
+        let currentStep = 0;
+        let stepsData = [];
+
+        function updateVisualizationStep(step) {
+            const container = document.getElementById("visualization");
+            container.innerHTML = "";
+            container.classList.remove("linkedlist"); // Ensure it's not linkedlist style
+            container.classList.add("stack");
+
+            if (!stepsData.length) {
+                container.textContent = "No data to visualize.";
+                return;
+            }
+
+            const { data, logMsg } = stepsData[step];
+
+            for (let i = 0; i < data.length; i++) {
+                const node = document.createElement("div");
+                node.className = "node";
+                node.textContent = data[i];
+                container.appendChild(node);
+            }
+
+            document.getElementById("steps").textContent = `${step + 1}. ${logMsg}`;
+        }
+
+        document.getElementById("runBtn").addEventListener("click", async () => {
+            const pyodide = await pyodideReadyPromise;
+            const code = editor.getValue();
+
+            try {
+                let output = await pyodide.runPythonAsync(`
+import sys
+import io
+sys.stdout = io.StringIO()
+` + code + `
+sys.stdout.getvalue()
+    `);
+
+                document.getElementById("output").textContent = output;
+
+                let resultJSON = await pyodide.runPythonAsync(`
+import json
+def convert_log():
+    out = []
+    for state, msg in log:
+        out.append({"data": state, "msg": msg})
+    return out
+
+try:
+    json.dumps(data)
+except Exception:
+    data = []
+
+try:
+    data_type
+except NameError:
+    data_type = "list"
+
+try:
+    json.dumps(log)
+except Exception:
+    log = []
+
+json.dumps({"type": data_type, "steps": convert_log()})
+    `);
+
+                let result = JSON.parse(resultJSON);
+
+                stepsData = result.steps.map(step => ({
+                    data: step.data,
+                    logMsg: step.msg
+                }));
+
+                currentStep = 0;
+                updateVisualizationStep(currentStep);
+
+            } catch (err) {
+                document.getElementById("output").textContent = "Error: " + err;
+                document.getElementById("visualization").innerHTML = "Visualization will appear here";
+                document.getElementById("steps").textContent = "Steps will appear here";
+            }
+        });
+
+        document.getElementById("prevStep").addEventListener("click", () => {
+            if (currentStep > 0) {
+                currentStep--;
+                updateVisualizationStep(currentStep);
+            }
+        });
+
+        document.getElementById("nextStep").addEventListener("click", () => {
+            if (currentStep < stepsData.length - 1) {
+                currentStep++;
+                updateVisualizationStep(currentStep);
+            }
+        });
+
+        document.getElementById("downloadBtn").addEventListener("click", () => {
+            const visualization = document.getElementById("visualization");
+            html2canvas(visualization).then(canvas => {
+                const dataURL = canvas.toDataURL("image/png");
+                const link = document.createElement("a");
+                link.href = dataURL;
+                link.download = `step_${currentStep + 1}.png`;
+                link.click();
+            });
+        });
+    </script>
+
+</body>
+
+</html>
