@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Python Data Structure Visualizer: LinkedList & Stack</title>
+
+    <!-- CodeMirror CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css" />
+
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #editor {
+            width: 600px;
+            height: 300px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+
+        #output {
+            width: 600px;
+            min-height: 80px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            white-space: pre-wrap;
+            background-color: #fefefe;
+        }
+
+        #visualization {
+            margin-top: 20px;
+            width: 600px;
+            min-height: 120px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            overflow-x: auto;
+            padding: 10px;
+        }
+
+        .node {
+            padding: 12px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 8px;
+            margin-right: 15px;
+            font-weight: bold;
+            position: relative;
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        .arrow {
+            font-size: 24px;
+            user-select: none;
+            margin-right: 15px;
+        }
+
+        /* For Stack, vertical layout */
+        #visualization.stack {
+            flex-direction: column-reverse;
+            align-items: flex-start;
+        }
+
+        #visualization.stack .node {
+            margin: 8px 0;
+            margin-right: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Python LinkedList & Stack Visualizer</h1>
+
+    <div id="editor"></div>
+    <div style="margin: 20px;">
+        <button id="runBtn">Run</button>
+        <button id="downloadBtn">Download Visualization as Image</button>
+    </div>
+
+    <div id="output">Output will appear here</div>
+    <div id="visualization">Visualization will appear here</div>
+
+    <!-- Pyodide -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+
+    <!-- CodeMirror -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js"></script>
+
+    <!-- html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        // Init CodeMirror
+        const editor = CodeMirror(document.getElementById("editor"), {
+            mode: "python",
+            lineNumbers: true,
+            value: `# Define linked list nodes and build a list\n` +
+                `class Node:\n` +
+                `    def __init__(self, val):\n` +
+                `        self.val = val\n` +
+                `        self.next = None\n\n` +
+                `class LinkedList:\n` +
+                `    def __init__(self):\n` +
+                `        self.head = None\n` +
+                `    def append(self, val):\n` +
+                `        if not self.head:\n` +
+                `            self.head = Node(val)\n` +
+                `        else:\n` +
+                `            current = self.head\n` +
+                `            while current.next:\n` +
+                `                current = current.next\n` +
+                `            current.next = Node(val)\n\n` +
+                `    def to_list(self):\n` +
+                `        res = []\n` +
+                `        current = self.head\n` +
+                `        while current:\n` +
+                `            res.append(current.val)\n` +
+                `            current = current.next\n` +
+                `        return res\n\n` +
+                `ll = LinkedList()\n` +
+                `for v in [10, 20, 30, 40]:\n` +
+                `    ll.append(v)\n` +
+                `print("LinkedList:", ll.to_list())\n\n` +
+                `data_type = "linkedlist"\n` +
+                `data = ll.to_list()\n\n\n` +
+                `# For stack, uncomment below and comment above\n` +
+                `"""\n` +
+                `class Stack:\n` +
+                `    def __init__(self):\n` +
+                `        self.items = []\n` +
+                `    def push(self, item):\n` +
+                `        self.items.append(item)\n` +
+                `    def pop(self):\n` +
+                `        if self.items:\n` +
+                `            return self.items.pop()\n` +
+                `    def to_list(self):\n` +
+                `        return self.items\n\n` +
+                `stack = Stack()\n` +
+                `for v in [1,2,3,4]:\n` +
+                `    stack.push(v)\n` +
+                `print("Stack:", stack.to_list())\n` +
+                `data_type = "stack"\n` +
+                `data = stack.to_list()\n` +
+                `"""`
+        });
+
+        let pyodideReadyPromise = loadPyodide();
+
+        document.getElementById("runBtn").addEventListener("click", async () => {
+            const pyodide = await pyodideReadyPromise;
+            const code = editor.getValue();
+
+            try {
+                let output = await pyodide.runPythonAsync(`
+import sys
+import io
+sys.stdout = io.StringIO()
+` + code + `
+sys.stdout.getvalue()
+      `);
+
+                document.getElementById("output").textContent = output;
+
+                // Get data and type safely
+                let resultJSON = await pyodide.runPythonAsync(`
+import json
+try:
+    json.dumps(data)
+except Exception:
+    data = []
+try:
+    data_type
+except NameError:
+    data_type = "list"
+json.dumps({"type": data_type, "data": data})
+      `);
+
+                let result;
+                try {
+                    result = JSON.parse(resultJSON);
+                } catch {
+                    result = { type: "list", data: [] };
+                }
+
+                visualizeData(result.type, result.data);
+
+            } catch (err) {
+                document.getElementById("output").textContent = "Error: " + err;
+                document.getElementById("visualization").innerHTML = "Visualization will appear here";
+                document.getElementById("visualization").classList.remove("stack");
+            }
+        });
+
+        function visualizeData(type, data) {
+            const container = document.getElementById("visualization");
+            container.innerHTML = "";
+            container.classList.remove("stack");
+
+            if (!Array.isArray(data) || data.length === 0) {
+                container.textContent = "No data to visualize.";
+                return;
+            }
+
+            if (type === "linkedlist") {
+                // Show linked list nodes connected by arrows →
+                for (let i = 0; i < data.length; i++) {
+                    const node = document.createElement("div");
+                    node.className = "node";
+                    node.textContent = data[i];
+                    container.appendChild(node);
+                    if (i !== data.length - 1) {
+                        const arrow = document.createElement("div");
+                        arrow.className = "arrow";
+                        arrow.textContent = "→";
+                        container.appendChild(arrow);
+                    }
+                }
+            } else if (type === "stack") {
+                // Show stack vertically (top on bottom)
+                container.classList.add("stack");
+                for (let i = 0; i < data.length; i++) {
+                    const node = document.createElement("div");
+                    node.className = "node";
+                    node.textContent = data[i];
+                    container.appendChild(node);
+                }
+            } else {
+                // Default: visualize as horizontal nodes (like list)
+                for (let i = 0; i < data.length; i++) {
+                    const node = document.createElement("div");
+                    node.className = "node";
+                    node.textContent = data[i];
+                    container.appendChild(node);
+                }
+            }
+        }
+
+        // Download visualization as image
+        document.getElementById("downloadBtn").addEventListener("click", () => {
+            const visualization = document.getElementById("visualization");
+            html2canvas(visualization).then(canvas => {
+                const dataURL = canvas.toDataURL("image/png");
+                const link = document.createElement("a");
+                link.href = dataURL;
+                link.download = "visualization.png";
+                link.click();
+            });
+        });
+    </script>
+
+</body>
+
+</html>
