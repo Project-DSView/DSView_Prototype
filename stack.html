@@ -72,6 +72,18 @@
             color: #333;
             font-weight: bold;
         }
+
+        footer {
+            display: flex;
+            justify-content: end;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background-color: orange;
+            padding: 10px;
+            color: white;
+        }
     </style>
 </head>
 
@@ -96,6 +108,11 @@
     <div id="steps">Steps will appear here</div>
 
     <a href="index.html" id="backBtn">&larr; Back to Index</a>
+
+    <footer>
+        <span style="margin-right: 30px;">Prototype Made by <a href="https://github.com/Earth123456789"
+                style="color: white;">Earth123456789</a></span>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
