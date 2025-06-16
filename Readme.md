@@ -9,16 +9,21 @@ Prototype นี้จัดทำขึ้นเพื่อรวบรวม�
 
 ## Features
 
-- In-browser Python code editor
-- Real-time visualization of data structures (e.g., lists, stacks, queues, trees)
-- User-friendly interface built with HTML, CSS, and JavaScript
-- Placeholder for future enhancements (e.g., additional data structures, code execution improvements)
+- Sandbox code editor & dragand drop
 
 ## See a prototype 
 
 ```bash
-https://earth123456789.github.io/DSView_Prototype/
+https://project-dsview.github.io/DSView_Prototype/
 ```
+
+## Tech Stack
+
+<div style="display: flex; gap: 15px;">
+  <img src="https://img.shields.io/badge/html5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5 Badge">
+  <img src="https://img.shields.io/badge/css3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3 Badge">
+  <img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript Badge">
+</div>
 
 ### Made by 
 
