@@ -1,6 +1,11 @@
 # Python Code Editor & Data Structure Visualizer Prototype
 
-This repository contains a prototype for a web-based Python code editor and data structure visualizer. The application is built using HTML, CSS, and JavaScript, providing an interactive environment for writing Python code and visualizing data structures.
+Prototype นี้จัดทำขึ้นเพื่อรวบรวมความคิดเห็นและข้อเสนอแนะเกี่ยวกับการพัฒนาระบบแสดงภาพการทำงานของโครงสร้าง
+ข้อมูลและอัลกอริทึมใหม่ เพื่อนำข้อมูลไปใช้ประกอบการตัดสินใจในการออกแบบและพัฒนาระบบ 
+
+เพื่อใช้ในรายวิชา 06016406 PROJECT 1 และ 06016407 PROJECT 2   
+
+โดยเฉพาะนักศึกษาคณะเทคโนโลยีสารสนเทศระดับปริญญาตรี สถาบันเทคโนโลยีพระจอมเกล้าคุณทหารลาดกระบัง
 
 ## Features
 
