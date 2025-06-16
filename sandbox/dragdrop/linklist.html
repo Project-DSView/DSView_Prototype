@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linked List Drag to Code + Remove</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css" />
+  <link rel="stylesheet" href="../../styles/sandbox/dragdrop/linklist.css">
+</head>
+
+<body>
+  <h1>Linked List Visualizer</h1>
+
+  <div id="palette" style="display: flex; gap: 10px;">
+    <div class="node" draggable="true" data-value="A">A</div>
+    <div class="node" draggable="true" data-value="B">B</div>
+    <div class="node" draggable="true" data-value="C">C</div>
+  </div>
+
+  <div id="canvas" ondragover="event.preventDefault()" ondrop="handleDrop(event)">
+    <!-- Dropped nodes will appear here -->
+  </div>
+
+  <div id="trash" ondragover="event.preventDefault()" ondrop="handleRemove(event)" style="margin: 10px;">
+    🗑️ Delete
+  </div>
+
+  <textarea id="editor">// Code will appear here</textarea>
+
+  <footer>
+    <span style="margin-right: 30px;">Prototype Made by <a href="https://github.com/Earth123456789"
+        style="color: white;">Earth123456789</a></span>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js"></script>
+  <script src="../../scripts/sandbox/dragdrop/link-list.js"></script>
+
+</body>
+
+</html>

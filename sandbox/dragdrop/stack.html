@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Stack Visualizer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css" />
+    <link rel="stylesheet" href="../../styles/sandbox/dragdrop/stack.css">
+</head>
+
+<body>
+    <h1>Stack Visualizer</h1>
+
+    <div style="display: flex; gap: 50px;">
+        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <div id="palette">
+                <div class="stack-node" draggable="true" data-value="A">A</div>
+                <div class="stack-node" draggable="true" data-value="B">B</div>
+                <div class="stack-node" draggable="true" data-value="C">C</div>
+            </div>
+
+            <div id="stack-box" ondragover="event.preventDefault()" ondrop="handleStackDrop(event)">
+                <!-- Stack nodes will appear here -->
+            </div>
+
+            <div id="trash" ondragover="event.preventDefault()" ondrop="handleStackRemove(event)" style="margin: 10px;">
+                🗑️ Delete
+            </div>
+        </div>
+
+        <textarea id="editor">// Python code appears here</textarea>
+    </div>
+    <footer>
+        <span style="margin-right: 30px;">Prototype Made by <a href="https://github.com/Earth123456789"
+                style="color: white;">Earth123456789</a></span>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js"></script>
+    <script src="../../scripts/sandbox/dragdrop/stack.js"></script>
+</body>
+
+</html>
