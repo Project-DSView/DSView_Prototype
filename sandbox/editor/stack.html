@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stack Visualizer - Step by Step</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../styles/sandbox/editor/stack.css" />
+</head>
+
+<body>
+
+    <h1>Stack Visualizer - Step by Step</h1>
+
+    <div style="display: flex;">
+        <div style="display: flex; flex-direction: column; margin-right: 20px;">
+            <div id="editor"></div>
+            <div class="control-buttons">
+                <button id="runBtn">Run</button>
+                <button id="downloadBtn">Download Visualization as Image</button>
+            </div>
+        </div>
+        <div style="display: flex; flex-direction: column; margin-left: 20px;">
+            <div id="output">Output will appear here</div>
+            <div id="currentLine">Current Line: -</div>
+
+            <div id="stepControls">
+                <button id="prevStep">Previous Step</button>
+                <button id="nextStep">Next Step</button>
+                <span id="stepInfo">Step 0 of 0</span>
+            </div>
+
+            <div id="visualizations">Visualizations will appear here</div>
+
+            <div id="steps">Steps will appear here</div>
+        </div>
+    </div>
+    <a href="../../index.html" id="backBtn" style="margin-top: 50px;">&larr; Back to Index</a>
+
+    <footer>
+        <span style="margin-right: 30px;">Prototype Made by <a href="https://github.com/Earth123456789"
+                style="color: white;">Earth123456789</a></span>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script src="../../scripts/sandbox/editor/stack.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,112 @@
+body {
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+#palette {
+    margin: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+#canvas {
+    width: 95vw;
+    max-width: 1000px;
+    min-height: 100px;
+    border: 2px dashed #ccc;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.canvas-node {
+    display: flex;
+    align-items: center;
+}
+
+.node {
+    width: 60px;
+    height: 60px;
+    background-color: orange;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    user-select: none;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.arrow {
+    font-size: 24px;
+    margin: 0 5px;
+    flex-shrink: 0;
+}
+
+.CodeMirror {
+    width: 95vw;
+    max-width: 1000px;
+    height: 300px;
+    border: 1px solid #ccc;
+    margin-top: 20px;
+}
+
+#trash {
+    margin-top: 20px;
+    width: 90%;
+    max-width: 200px;
+    height: 60px;
+    background-color: #ff4d4f;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* 📱 Extra tweak for very small screens */
+@media (max-width: 500px) {
+    .node {
+        width: 50px;
+        height: 50px;
+        font-size: 14px;
+    }
+
+    .arrow {
+        font-size: 20px;
+    }
+
+    .CodeMirror {
+        height: 250px;
+    }
+
+    #trash {
+        font-size: 14px;
+    }
+}
+
+footer {
+    display: flex;
+    justify-content: end;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: orange;
+    padding: 10px;
+    color: white;
+}
